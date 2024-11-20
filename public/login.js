@@ -1,28 +1,30 @@
-document.getElementById('loginForm').addEventListener('submit', handleLogin);
 
-function handleLogin(event)
-{
+
+const loginForm = document.getElementById("login-form");
+const errorMsg = document.getElementById('error');
+let login = [];
+
+loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
 
-    const email=document.getElementById('email').value;
-    const password=document.getElementById('password').value;
+    try {
+        const response = await axios.post(`http://localhost:3000/user/login`, { email, password });
+        console.log(response);
+        const token = response.data.token;
+        localStorage.setItem('token', token);
+        window.location.href="/expense.html"
 
-    const user={
-        email:email,
-        password:password,
-    }
-    console.log(user);
-    axios.post('http://localhost:5000/user/login',user)
-    .then(r=>{
-        console.log(r.data.token);
+        document.getElementById('email').value = "";
+        document.getElementById('password').value = "";
+
+        errorMsg.textContent = 'Login successful';
+    } catch (error) {
        
-        const div=document.getElementById('mydiv');
-        div.innerText=r.data.msg;
-        localStorage.setItem("jwt",r.data.token);
-       window.location.href="http://localhost:5000/expense.html";
-    })
-    .catch(error=>{
-       
+        document.getElementById('email').value = "";
+        document.getElementById('password').value = "";
+
         if (error.response) {
           
             const div = document.getElementById('mydiv');
@@ -36,18 +38,6 @@ function handleLogin(event)
                 console.log(error.response.data.message);
                 div.innerText = 'An error occurred';
             }
-        } else if (error.request) {
-       
-            console.log(error.request);
-            const div = document.getElementById('mydiv');
-            div.innerText = 'No response received from server';
-        } else {
-
-            console.log('Error', error.message);
-            const div = document.getElementById('mydiv');
-            div.innerText = 'An error occurred: ' + error.message;
         }
-
-    });
-
-}
+    }
+});
