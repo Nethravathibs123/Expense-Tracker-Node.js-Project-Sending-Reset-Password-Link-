@@ -1,4 +1,5 @@
 
+// controllers/resetpassword.js
 const uuid = require('uuid');
 const { TransactionalEmailsApi, SendSmtpEmail } = require('@getbrevo/brevo'); // Import TransactionalEmailsApi and SendSmtpEmail
 const bcrypt = require('bcryptjs');
