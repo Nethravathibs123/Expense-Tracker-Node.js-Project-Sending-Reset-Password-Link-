@@ -8,7 +8,10 @@ const Forgotpassword = sequelize.define('forgotpassword', {
         allowNull: false,
         primaryKey: true
     },
-    active: Sequelize.BOOLEAN,
-    expiresby: Sequelize.DATE
+    isactive:{
+        type:Sequelize.ENUM,
+        values:['ACTIVE','NOT'],
+        allowNull:false
+    }
 })
 module.exports = Forgotpassword;
