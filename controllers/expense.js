@@ -43,7 +43,9 @@ exports.addExpense = async (req, res) => {
 exports.getAllExpenses = async (req, res) => {
     try {
         const expenses = await Expense.findAll({where: {userId: req.user.id}});
-        res.status(200).json(expenses);
+        console.log(req.user.ispremium);
+        res.status(200).json({expenses:expenses, ispremium:req.user.ispremium});
+       
     } catch (error) {
         console.error('Error fetching expenses:', error);
         res.status(500).json({ error: 'Error fetching expenses' });
@@ -58,7 +60,7 @@ exports.updateExpense = async (req, res) => {
   const { amount, description, category } = req.body;
 
   try {
-    const expense = await Expense.findByPk(expenseId, { transaction: t }); // Use transaction in find query
+    const expense = await Expense.findByPk(expenseId, { transaction: t }); 
     if (!expense) {
       return res.status(404).json({ error: 'Expense not found.' });
     }

@@ -11,4 +11,5 @@ router.get('/premiummembership', userauthenticate, purchaseController.purchaseMe
 
 router.post('/updatetransactionstatus',userauthenticate, purchaseController.updateMembership);
 
+router.post('/status',userauthenticate, purchaseController.checkPremium);
 module.exports = router;

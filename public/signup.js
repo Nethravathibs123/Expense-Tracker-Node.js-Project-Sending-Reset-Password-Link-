@@ -1,84 +1,43 @@
-
-
-
-
 const signUpForm = document.getElementById("sign-up-form");
-
 const errorMsg = document.getElementById('error');
+const usernameInput = document.getElementById('username');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const messageElement = document.getElementById('message');
 
-let users = [];
-
-
+const clearForm = () => {
+    usernameInput.value = "";
+    emailInput.value = "";
+    passwordInput.value = "";
+    errorMsg.textContent = ''; 
+};
 
 signUpForm.addEventListener('submit', async(event) => {
     event.preventDefault();
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-  
-    try{
-        const response = await axios.post(`http://localhost:3000/user/signup`,{username, email, password});
-        users.push(response.data);
 
-        document.getElementById('username').value = "";
-        document.getElementById('email').value = "";
-        document.getElementById('password').va
-        const signUpForm = document.getElementById("sign-up-form");
-        
-        const errorMsg = document.getElementById('error');
-        
-        let users = [];
-        
-        signUpForm.addEventListener('submit', async(event) => {
-            event.preventDefault();
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-          
-            try{
-                const response = await axios.post(`http://localhost:3000/user/signup`,{username, email, password});
-                users.push(response.data);
-        
-                document.getElementById('username').value = "";
-                document.getElementById('email').value = "";
-                document.getElementById('password').value = "";
-                
-        
-                if (response.status === 201) {
-                    document.getElementById('message').textContent = 'User registered successfully.';
-                  //  window.location.href = "/expense.html";
-                } else if (response.status === 409) {
-                    document.getElementById('message').textContent = 'User already exists.';
-                } else {
-                    document.getElementById('message').textContent = 'An error occurred.';
-                }
-                errorMsg.textContent = '';
-            }
-            catch(error) {
-                document.getElementById('username').value = "";
-                document.getElementById('email').value = "";
-                document.getElementById('password').value = "";
-                
-                if (error.response && error.response.data && error.response.data.message) {
-                    errorMsg.textContent = `Error: ${error.response.data.message}`;
-                } else {
-                    console.log('Error adding user:', error);
-                    
-                }
-            }
-            
-        });lue = "";
+    const username = usernameInput.value;
+    const email = emailInput.value;
+    const password = passwordInput.value;
 
-        errorMsg.textContent = '';
-    }
-    catch(error){
-        if(error.response && (error.response.status === 409 || error.response.status === 404)) {
-            document.getElementById('email').value = "";
-            document.getElementById('password').value = "";
+    try {
+        const response = await axios.post('http://localhost:3000/user/signup', { username, email, password });
+
+        clearForm();
+        if (response.status === 201) {
+            messageElement.textContent = 'User registered successfully.';
+        } else if (response.status === 409) {
+            messageElement.textContent = 'User already exists.';
+        } else {
+            messageElement.textContent = 'An error occurred.';
+        }
+
+    } catch (error) {
+        clearForm();
+        if (error.response && error.response.data && error.response.data.message) {
             errorMsg.textContent = `Error: ${error.response.data.message}`;
         } else {
-            console.log('Error adding user: ',error);
-            errorMsg.textContent = '';
+            console.log('Error adding user:', error);
+        
         }
     }
 });

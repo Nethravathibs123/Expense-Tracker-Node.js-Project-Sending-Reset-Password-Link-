@@ -1,17 +1,9 @@
 
-
 let expenses = [];
 let editingIndex = -1;
 
-const amountInput = document.getElementById('amount-input');
-const descriptionInput = document.getElementById('description-input');
-const categorySelect = document.getElementById('category-select');
-const addExpenseButton = document.getElementById('add-expense');
 const expenseList = document.getElementById('expense-list');
 const purchasePremiumButton = document.getElementById('purchase-premium');
-const leaderboardSection = document.getElementById('leaderboard-section');  
-const leaderboardList = document.getElementById('leaderboard-list');  
-
 
 function getAuthToken() {
   return localStorage.getItem('token');
@@ -52,7 +44,18 @@ async function fetchExpenses() {
     const response = await axios.get('http://localhost:3000/expenses', {
       headers: { Authorization: token }
     });
-    expenses = response.data;
+    let isPremium=response.data.ispremium;
+    expenses =response.data.expenses;
+    if (isPremium) {
+    // console.log(isPremium);
+    // console.log(expenses);
+  
+      document.getElementById('purchase').style.display = 'block';
+      document.getElementById('purchase-premium').style.display = 'none'; 
+    } else {
+      document.getElementById('purchase').style.display = 'none'; 
+      document.getElementById('purchase-premium').style.display = 'block';
+    }    
     renderExpenses();  
   } catch (error) {
     console.error('Error fetching expenses:', error);
@@ -61,10 +64,15 @@ async function fetchExpenses() {
 }
 
 
+const addExpenseButton = document.getElementById('add-expense');
 addExpenseButton.addEventListener('click', async () => {
+const amountInput = document.getElementById('amount-input');
+const descriptionInput = document.getElementById('description-input');
+const categorySelect = document.getElementById('category-select');
   const amount = amountInput.value;
   const description = descriptionInput.value;
   const category = categorySelect.value;
+  
 
   if (amount && description && category) {
     const token = getAuthToken();
@@ -138,10 +146,8 @@ expenseList.addEventListener('click', async (event) => {
     editingIndex = index;  
   }
 });
+
 const isPremium = localStorage.getItem('isPremium');
-
-
-
 async function handlePurchase(e) {
   e.preventDefault();
 
@@ -196,6 +202,8 @@ async function handlePurchase(e) {
     alert('Payment initiation failed. Please try again.');
   }
 }
+
+
 purchasePremiumButton.addEventListener('click', handlePurchase);
 
 
@@ -208,14 +216,13 @@ function showLeaderBoard() {
       alert('You need to be logged in to view the leaderboard.');
       return;
     }
-
     try {
       const response = await axios.get('http://localhost:3000/premium/showLeaderBoard', {
         headers: { Authorization: token }
       });
 
       const userLeaderBoardArray = response.data;
-
+     
       const leaderboardElem = document.getElementById('leaderboard-list');
       if (!leaderboardElem) {
         console.error('Leaderboard container element not found.');
@@ -227,10 +234,10 @@ function showLeaderBoard() {
         const formattedExpense = new Intl.NumberFormat('en-IN').format(userDetails.totalExpense); 
   leaderboardElem.innerHTML += `
            <tr>
-            <td>${index + 1}</td>
-            <td>${userDetails.username}</td>
-            <td>₹${formattedExpense}</td> <!-- Display formatted rupee amount -->
-          </tr>
+                <td>` + (index + 1) + `</td>
+                <td>` + userDetails.username + `</td>
+                <td>₹` + formattedExpense + `</td>
+         </tr>
         `;
       });
     } catch (error) {

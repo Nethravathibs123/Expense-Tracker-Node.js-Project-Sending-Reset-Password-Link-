@@ -1,9 +1,6 @@
-
-
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-
 
 const JWT_SECRET = "Nethra";
 console.log(JWT_SECRET);
@@ -22,8 +19,7 @@ exports.postAddUsers = async (req, res) => {
         if (existingUser) {
             return res.status(409).json({ message: 'User already exists.' });
         }
-
-     
+ 
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.create({ username, email, password: hashedPassword });
 
@@ -43,13 +39,11 @@ exports.postLogin = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-
-      
+    
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) {
             return res.status(401).json({ message: 'Incorrect password' });
         }
-
         const token = generateAccessToken(user.id, user.username);
 
         return res.status(200).json({ message: 'Login successful', token: token });
